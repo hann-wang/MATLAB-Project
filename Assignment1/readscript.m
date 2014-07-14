@@ -1,5 +1,5 @@
-function [array]=readscript(Fs,Base)
-	data=load('script.dat');
+function [array]=readscript(Fs,Base,scriptname)
+	data=load(scriptname);
 	array=[];
 	m=size(data,1);
 	count=0;	
@@ -37,6 +37,11 @@ function [array]=readscript(Fs,Base)
 			fre=440;
 		case 7
 			fre=523.25;
+		case 0
+			fre=0;
+		end
+		if data(i,2)==2.67
+				data(i,2)=8/3;
 		end
 		fre=fre*2^((data(i,3)+b)/12);
 		%disp(fre)
