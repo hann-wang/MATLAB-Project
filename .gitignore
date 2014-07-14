@@ -1,0 +1,6 @@
+# vim
+*~
+*swap*
+# txt and data
+*.txt
+*.dat
