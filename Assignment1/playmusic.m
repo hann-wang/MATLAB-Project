@@ -1,4 +1,3 @@
-function playmusic(script)
-	Fs=8192;
-	sound(readscript(Fs,'F','eastred.dat'),Fs);
-
+clear	
+Fs=8192;
+sound(readscript(Fs,'F','eastred.dat'),Fs);

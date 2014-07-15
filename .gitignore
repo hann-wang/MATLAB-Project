@@ -4,3 +4,6 @@
 # txt and data
 *.txt
 *.mat
+# report
+*.doc*
+*.pdf
