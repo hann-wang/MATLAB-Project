@@ -7,7 +7,6 @@ function [fre]=Msfre(array)
 	f=fft(temp);
 	r=abs(f)/size(f,1);
 	plot(r)
-	[m,fre]=max(r);
-	fre=fre*Fs/size(f,1);
-	find(r>0.01)*Fs/size(f,1)
+	res=find(r>0.01)*Fs/size(f,1);
+	fre=res(1);
 	
