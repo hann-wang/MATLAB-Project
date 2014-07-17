@@ -45,7 +45,7 @@ script=[];
 BaseC=174.61;
 for i=1:size(numarray,2)
 	if i==size(numarray,2)
-		Rfre=Msfre(wav(numarray(i-1):size(numarray,2)-2000))
+		Rfre=Msfre(wav(numarray(i-1):size(numarray,2)))
 	else
 		Rfre=Msfre(wav(numarray(i):numarray(i+1)))
 	end
