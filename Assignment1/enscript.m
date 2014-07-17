@@ -38,13 +38,17 @@ while true
 	end
 	i=i+1;	
 end
-%plot(numarray,maxarray,'rx')
+plot(numarray,maxarray,'rx')
 save('numarray')
 %----------------------------------------------------------------%
 script=[];
 BaseC=174.61;
-for i=2:size(numarray,2)
-	Rfre=Msfre(wav(numarray(i-1):numarray(i)))
+for i=1:size(numarray,2)
+	if i==size(numarray,2)
+		Rfre=Msfre(wav(numarray(i-1):size(numarray,2)-2000))
+	else
+		Rfre=Msfre(wav(numarray(i):numarray(i+1)))
+	end
 	tFre=zeros(24,1);
 	for i=1:size(Rfre)
 		for j=0:23
