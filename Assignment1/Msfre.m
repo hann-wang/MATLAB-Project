@@ -6,8 +6,16 @@ function [fre]=Msfre(array)
 	end
 	f=fft(temp,8000);
 	r=abs(f);
-	%plot(r);
-	%axis([0 400 -600 600]);
-	%getframe();
-	fre=find(r>70);
+	plot(r);
+	axis([100 800 0 600]);
+	getframe();
+	for i=1:300
+		fre=find(r>i);
+		num=find(fre<800);
+		N=size(num,1);
+		if N<7
+			break
+		end
+	end
+	[fre(num) r(fre(num))]
 	
