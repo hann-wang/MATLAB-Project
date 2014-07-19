@@ -1,10 +1,10 @@
 function [array]=cut(num)
-	load numarray
+	array=[];
+	script=load('numarray.mat');
 	wav=wavread('fmt.wav');
-	if num == size(numarray)
-		array=wav(numarray(num):size(wav,1));
+	if num == size(script)
+		array=wav(script(i):size(wav,1));
 	else
-		array=wav(numarray(num):numarray(num+1));
+		array=wav(script(i):script(i+1));
 	end
-	Msfre(array);
 
