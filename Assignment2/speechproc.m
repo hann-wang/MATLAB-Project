@@ -2,6 +2,7 @@ function speechproc()
 
     % 定义常数
     FL = 80;                % 帧长
+	FL_v=2*FL;
     WL = 240;               % 窗长
     P = 10;                 % 预测系数个数
     s = readspeech('voice.pcm',100000);             % 载入语音s
@@ -15,12 +16,15 @@ function speechproc()
     % 合成滤波器
     exc_syn = zeros(L,1);   % 合成的激励信号（脉冲串）
     s_syn = zeros(L,1);     % 合成语音
+	zi_syn=zeros(P,1);
     % 变调不变速滤波器
     exc_syn_t = zeros(L,1);   % 合成的激励信号（脉冲串）
     s_syn_t = zeros(L,1);     % 合成语音
+	zi_syn_t=zeros(P,1);
     % 变速不变调滤波器（假设速度减慢一倍）
     exc_syn_v = zeros(2*L,1);   % 合成的激励信号（脉冲串）
     s_syn_v = zeros(2*L,1);     % 合成语音
+	zi_syn_v=zeros(P,1);
 
     hw = hamming(WL);       % 汉明窗
     
@@ -34,18 +38,18 @@ function speechproc()
 
         if n == 27
         % (3) 在此位置写程序，观察预测系统的零极点图
-        zplane([1 zeros(1,size(A,2)-1)],A); 
+			zplane([1 zeros(1,size(A,2)-1)],A); 
         end
         
         s_f = s((n-1)*FL+1:n*FL);       % 本帧语音，下面就要对它做处理
 
         % (4) 在此位置写程序，用filter函数s_f计算激励，注意保持滤波器状态
-	[exc((n-1)*FL+1:n*FL) zi_pre]=filter(A,[1 zeros(1,size(A,2)-1)],s_f,zi_pre);	
+		[exc((n-1)*FL+1:n*FL) zi_pre]=filter(A,[1 zeros(1,size(A,2)-1)],s_f,zi_pre);	
         
         % exc((n-1)*FL+1:n*FL) = ... 将你计算得到的激励写在这里
 
         % (5) 在此位置写程序，用filter函数和exc重建语音，注意保持滤波器状态
-	[s_rec((n-1)*FL+1:n*FL) zi_rec]=filter([1 zeros(1,size(A,2)-1)],A,exc((n-1)*FL+1:n*FL),zi_rec);	
+		[s_rec((n-1)*FL+1:n*FL) zi_rec]=filter([1 zeros(1,size(A,2)-1)],A,exc((n-1)*FL+1:n*FL),zi_rec);	
         
         % s_rec((n-1)*FL+1:n*FL) = ... 将你计算得到的重建语音写在这里
 
@@ -56,29 +60,54 @@ function speechproc()
 
         
         % (10) 在此位置写程序，生成合成激励，并用激励和filter函数产生合成语音
-
-        
+		
+		for i=(n-1)*FL+1:n*FL
+			exc_syn(i)=(mod(i,PT)==0)*G;
+		end 
+		[s_syn((n-1)*FL+1:n*FL) zi_syn]=filter([1 zeros(1,size(A,2)-1)],A,exc_syn((n-1)*FL+1:n*FL),zi_syn);	
         % exc_syn((n-1)*FL+1:n*FL) = ... 将你计算得到的合成激励写在这里
         % s_syn((n-1)*FL+1:n*FL) = ...   将你计算得到的合成语音写在这里
 
         % (11) 不改变基音周期和预测系数，将合成激励的长度增加一倍，再作为filter
         % 的输入得到新的合成语音，听一听是不是速度变慢了，但音调没有变。
+		for	i=(n-1)*FL_v+1:n*FL_v
+			exc_syn_v(i)=(mod(i,PT)==0)*G;
+		end 
+		[s_syn_v((n-1)*FL_v+1:n*FL_v) zi_syn_v]=filter([1 zeros(1,size(A,2)-1)],A,exc_syn_v((n-1)*FL_v+1:n*FL_v),zi_syn_v);	
 
         
         % exc_syn_v((n-1)*FL_v+1:n*FL_v) = ... 将你计算得到的加长合成激励写在这里
         % s_syn_v((n-1)*FL_v+1:n*FL_v) = ...   将你计算得到的加长合成语音写在这里
         
         % (13) 将基音周期减小一半，将共振峰频率增加150Hz，重新合成语音，听听是啥感受～
-
-        
+		PT_t=floor(PT/2);
+		for	i=(n-1)*FL+1:n*FL
+			exc_syn_t(i)=(mod(i,PT_t)==0)*G;
+		end 
+		[zz pp kk]=tf2zp([1 zeros(1,size(A,2)-1)],A);
+		a=angle(pp);
+		a=a+150/8000*pi*2*sign(a);
+		p=abs(pp).*exp(a*i);
+		[ee ss]=zp2tf(zz,pp,kk);
+		[s_syn_t((n-1)*FL+1:n*FL) zi_syn_t]=filter(ee,ss,exc_syn_t((n-1)*FL+1:n*FL),zi_syn_t);	
         % exc_syn_t((n-1)*FL+1:n*FL) = ... 将你计算得到的变调合成激励写在这里
         % s_syn_t((n-1)*FL+1:n*FL) = ...   将你计算得到的变调合成语音写在这里
-        
     end
 
     % (6) 在此位置写程序，听一听 s ，exc 和 s_rec 有何区别，解释这种区别
     % 后面听语音的题目也都可以在这里写，不再做特别注明
-    
+	sound(exc);
+	sound(s);
+	sound(s_rec);
+	sound(s_syn);
+	sound(s_syn_v);
+	sound(s_syn_t);
+	figure();
+	subplot(2,1,1);
+	plot(s-s_rec,'r');
+	subplot(2,1,2);
+	plot(s-s_syn,'b');
+		
 
     % 保存所有文件
     writespeech('exc.pcm',exc);
