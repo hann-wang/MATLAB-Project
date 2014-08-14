@@ -30,20 +30,6 @@ for i=1:h_h
 	end
 end
 
-l_r=0;
-str_r='';
-for i=1:7
-	l_r=l_r+(r(64,i)+1)*2^(6-i);
-end
-for i=2:11+1
-	t=0;
-	for j=1:7
-		t=t+r(64,(i-1)*7+j)*2^(6-j);
-	end
-	str_r=strcat(str_r,char(t))
-end
-str_r
-
 
 [h2 w2]=size(r);
 DC=zeros(1,w2);
@@ -205,10 +191,10 @@ str_r='';
 for i=1:7
 	l_r=l_r+(r(64,i)+1)*2^(6-i);
 end
-for i=2:11+1
+for i=1:l_r
 	t=0;
 	for j=1:7
-		t=t+r(64,(i-1)*7+j)*2^(6-j);
+		t=t+(r(64,j+7*i)+1)*2^(6-j);
 	end
 	str_r=strcat(str_r,char(t));
 end
