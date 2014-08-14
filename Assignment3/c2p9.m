@@ -1,13 +1,12 @@
 c2p8
-data=r;
-[h w]=size(data);
-DC=zeros(1,w);
-DC(1)=data(1,1);
-for i=2:w
-	DC(i)=data(1,i-1)-data(1,i);
+[h2 w2]=size(r);
+DC=zeros(1,w2);
+DC(1)=r(1,1);
+for i=2:w2
+	DC(i)=r(1,i-1)-r(1,i);
 end
 DC_Code=[];
-for i=1:w
+for i=1:w2
 	if DC(i)==0
 		cat=0;
 	else
@@ -18,9 +17,9 @@ for i=1:w
 end
 
 
-AC=data(2:h,:);
+AC=r(2:h2,:);
 AC_Code=[];
-for i=1:w
+for i=1:w2
 	run=0;
 	t=AC(:,i);
 	last_0=find(t~=0,1,'last');
