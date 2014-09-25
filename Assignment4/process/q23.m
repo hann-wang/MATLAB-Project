@@ -1,6 +1,7 @@
 close all
 %clear
-image=imread('graygroundtruth.jpg');
+%image=imread('graygroundtruth.jpg');
+image=imread('graycapture.jpg');
 figure(1)
 imshow(image)
 [h w]=size(image);
@@ -62,7 +63,7 @@ for i=1:block_v
 end
 
 
-HPF1=fir1(32,0.5,'high');
+HPF1=fir1(32,0.6,'high');
 HPF2=zeros(21,21);
 for i=1:21
 	for j=1:21
@@ -79,7 +80,6 @@ HP_image=uint8(conv2(HPF2,image)+127);
 figure(6)
 imshow(HP_image)
 
-%{
 result=zeros(block_h*block_v,block_h*block_v)-1;
 figure(7)
 for m=1:block_h*block_v
@@ -105,16 +105,16 @@ for m=1:block_h*block_v
 		sublock_1=HP_image(v_s_1:v_e_1,h_s_1:h_e_1);
 		sublock_2=HP_image(v_s_2:v_e_2,h_s_2:h_e_2);
 		%sublock_2=HP_image(v_s_2+4:v_e_2-4,h_s_2+4:h_e_2-4);
-		r_temp=max(max(xcorr2(sublock_1,sublock_2)))/(norm(double(sublock_1(:)))* norm(double(sublock_2(:))));
+		r_temp=max(max(xcorr2(double(sublock_1),double(sublock_2))))/(norm(double(sublock_1(:)))* norm(double(sublock_2(:))));
 		%r_temp=max(max(xcorr2(sublock_1,sublock_2)))/norm(double(sublock_2(:)))^2;
 		result(m,n)=max(r_temp);
 
 	end
 end
-%}
 
 temp=result;
-image=imread('graygroundtruth.jpg');
+%image=imread('graygroundtruth.jpg');
+image=imread('graycapture.jpg');
 figure(7)
 for z=1:10
 	rel=max(max(temp));
