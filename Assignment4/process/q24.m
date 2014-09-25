@@ -1,5 +1,5 @@
 close all
-%clear
+clear
 %image=imread('graygroundtruth.jpg');
 image=imread('graycapture.jpg');
 figure(1)
@@ -76,11 +76,12 @@ stem(HPF1)
 subplot(1,2,2)
 mesh(-HPF2)
 image=double(image-127);
+
 HP_image=conv2(HPF2,image);
-%HP_image=uint8(conv2(HPF2,image)+127);
+HP_image=HP_image(11:h+10,11:w+10);
 figure(6)
-imshow(uint8(HP_image))
-%{
+imshow(uint8(HP_image)+127)
+
 result=zeros(block_h*block_v,block_h*block_v)-1;
 figure(7)
 for m=1:block_h*block_v
@@ -112,7 +113,6 @@ for m=1:block_h*block_v
 
 	end
 end
-%}
 close all
 temp=result;
 %image=imread('graygroundtruth.jpg');
@@ -123,10 +123,11 @@ for z=1:100
 	temp(m,n)=0;
 end
 %first 100 compares have no error
-err=[124 127 128 129 131 135 137 141 144 145];
+err=[117 119 121 123 131 138 142 144 146 147];
 count=0;
 figure(1)
 for z=101:200
+
 	rel=max(max(temp));
 	[m n]=find(temp==rel);
 	temp(m,n)=0;
